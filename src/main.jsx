@@ -5,11 +5,11 @@ import Word from "./components/Words";
 
 const router = createBrowserRouter([
   {
-    path: "/login",
+    path: "/character,
     element: <Character />,
   },
   {
-    path: "/signup",
+    path: "/word",
     element: <Word />,
   },
 ]);
