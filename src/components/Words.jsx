@@ -1,7 +1,7 @@
 import React from "react";
 import Character from "./character";
 
-function Word(props) {
+function Words(props) {
   let givenWord = props.word["word"].split("");
   return props.word["status"] !== "tracking" ? (
     <span
@@ -36,4 +36,4 @@ function Word(props) {
   );
 }
 
-export default Word;
+export default Words;

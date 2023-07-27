@@ -1,16 +1,11 @@
 import ReactDOM from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import Character from "./components/character";
-import Word from "./components/Words";
+import Type from "./components/Type";
 
 const router = createBrowserRouter([
   {
-    path: "/character,
-    element: <Character />,
-  },
-  {
-    path: "/word",
-    element: <Word />,
+    path: "/type",
+    element: <Type />,
   },
 ]);
 ReactDOM.createRoot(document.getElementById("root")).render(

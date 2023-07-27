@@ -44,7 +44,7 @@ function Navbar() {
                 <Link
                   className={`nav-link active text-${textTheme}`}
                   aria-current="page"
-                  href=""
+                  href="/type"
                 >
                   Home
                 </Link>
