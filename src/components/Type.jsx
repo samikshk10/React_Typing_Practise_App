@@ -7,6 +7,7 @@ import Words from "./Words";
 import data from "../data.json";
 
 import "../assets/css/type.css";
+import Navbar from "./navbar";
 
 function Type() {
   const [startTime, setStartTime] = useState(0);
@@ -25,7 +26,7 @@ function Type() {
 
   // First Attempts
 
-  let totalWords = 12; //default number of words
+  let totalWords = parseInt(localStorage.getItem("totalwords")) || 12; //12 default number of words
   const [words, setWords] = useState([
     {
       word: "The",
@@ -78,9 +79,12 @@ function Type() {
   ]);
 
   const navigate = useNavigate();
-  const timer = useRef(null); // Use useRef to maintain a consistent reference to the timer
+  const timer = useRef(null);
 
   useEffect(() => {
+    if (counter == 0) {
+      saveResults();
+    }
     document.getElementById("userInput").focus();
     let intervalId;
 
@@ -89,7 +93,6 @@ function Type() {
         setCounter((prevCounter) => prevCounter - 1);
       }, 1000);
     } else {
-      setCounter(60);
       clearInterval(intervalId);
       console.log("timer started is fallse");
     }
@@ -97,7 +100,7 @@ function Type() {
     return () => {
       clearInterval(timer.current); // Clear the interval using the timer ref
     };
-  }, [started]);
+  }, [started, counter]);
 
   const resetData = () => {
     // reset when sentence is laoded
@@ -107,7 +110,6 @@ function Type() {
     setTypedWord("");
     setCurrent(0);
     setCorrectCharacters(0);
-    setCounter(60);
   };
 
   const loadWords = () => {
@@ -170,6 +172,8 @@ function Type() {
     if (current >= words.length - 1) {
       // user types the last word
 
+      console.log("this is word counter>>>");
+
       if (event.target.value === words[current]["word"]) {
         console.log("this is the last word");
         console.log(
@@ -214,36 +218,55 @@ function Type() {
 
   return (
     <>
+      <Navbar />
+      <div>{chooseType === 1 && <h1>Timer : {counter}</h1>}</div>
       <div className="container pt-4">
-        {chooseType === 1 && <h1>Timer : {counter}</h1>}
         <div className="row d-flex justify-content-center">
-          <div className="col-xl-1 col-lg-6 col-md-6 col-6 text-center">
-            <span>Choose By Time</span>
+          <div className="col-xl-1 col-lg-6 col-md-6 col-6 text-center w-25">
+            <span
+              className={chooseType === 1 ? `text-success fw-bold` : undefined}
+            >
+              Choose By Time
+            </span>
             <select
               onChange={(e) => {
                 console.log(e.target.value);
                 setchooseType(1);
+                totalWords = 50;
+                localStorage.setItem("totalwords", 50);
                 setCounter(e.target.value);
                 console.log("this is counter" + counter);
                 loadWords();
               }}
               className="btn btn-secondary rounded-pill w-100"
             >
+              <option disabled hidden selected>
+                Choose Time
+              </option>
               <option value="30">30</option>
               <option value="60">60</option>
             </select>
           </div>
-          <div className="col-xl-1 col-lg-6 col-md-6 col-6 text-center">
-            <span>Choose By word</span>
+          <div className="col-xl-1 col-lg-6 col-md-6 col-6 text-center w-25">
+            <span
+              className={chooseType === 2 ? `text-success fw-bold ` : undefined}
+            >
+              Choose By word
+            </span>
             <select
               onChange={(e) => {
                 console.log(e.target.value);
                 totalWords = e.target.value;
+                localStorage.setItem("totalwords", e.target.value);
+
                 setchooseType(2);
                 loadWords();
               }}
               className="btn btn-secondary rounded-pill w-100"
             >
+              <option disabled hidden selected>
+                Choose No.of Words
+              </option>
               <option value="12">12</option>
               <option value="20">20</option>
               <option value="40">40</option>

@@ -5,7 +5,7 @@ import Result from "./components/Result";
 
 const router = createBrowserRouter([
   {
-    path: "/type",
+    path: "/",
     element: <Type />,
   },
   {

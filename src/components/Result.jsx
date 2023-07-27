@@ -28,7 +28,10 @@ function Result() {
                 </tr>
                 <tr className="fs-4">
                   <td>Time</td>
-                  <td>{localStorage.getItem("seconds").slice(0, 5)} seconds</td>
+                  <td>
+                    {Math.floor(localStorage.getItem("seconds").slice(0, 5))}{" "}
+                    seconds
+                  </td>
                 </tr>
                 <tr className="fs-4">
                   <td>Incorrect Words</td>
@@ -43,7 +46,7 @@ function Result() {
             <Link
               className="btn btn-primary mt-3"
               aria-current="page"
-              to="/type"
+              to="/"
             >
               ReType
             </Link>
