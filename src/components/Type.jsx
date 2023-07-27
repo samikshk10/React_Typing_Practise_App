@@ -1,15 +1,18 @@
 import "../App.css";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 import Words from "./Words";
 
 import data from "../data.json";
 
+import "../assets/css/type.css";
+
 function Type() {
   const [startTime, setStartTime] = useState(0);
   const [acc, setacc] = useState(100);
   const [correctCount, setCorrectCount] = useState(0);
+  const [incorrectCount, setIncorrectCount] = useState(0);
   const [correctCharacters, setCorrectCharacters] = useState(0);
   const [started, setStarted] = useState(false);
   const [typedWord, setTypedWord] = useState("");
@@ -17,6 +20,10 @@ function Type() {
   const [fullWordsCollectionArray, setFullWordsCollectionArray] = useState(
     data.words
   );
+  const [chooseType, setchooseType] = useState(0);
+  const [counter, setCounter] = useState(60);
+
+  // First Attempts
 
   let totalWords = 12; //default number of words
   const [words, setWords] = useState([
@@ -71,10 +78,26 @@ function Type() {
   ]);
 
   const navigate = useNavigate();
+  const timer = useRef(null); // Use useRef to maintain a consistent reference to the timer
 
   useEffect(() => {
     document.getElementById("userInput").focus();
-  }, []);
+    let intervalId;
+
+    if (started) {
+      intervalId = setInterval(() => {
+        setCounter((prevCounter) => prevCounter - 1);
+      }, 1000);
+    } else {
+      setCounter(60);
+      clearInterval(intervalId);
+      console.log("timer started is fallse");
+    }
+    timer.current = intervalId;
+    return () => {
+      clearInterval(timer.current); // Clear the interval using the timer ref
+    };
+  }, [started]);
 
   const resetData = () => {
     // reset when sentence is laoded
@@ -84,6 +107,7 @@ function Type() {
     setTypedWord("");
     setCurrent(0);
     setCorrectCharacters(0);
+    setCounter(60);
   };
 
   const loadWords = () => {
@@ -128,6 +152,7 @@ function Type() {
       correctCharacters / ((Date.now() - startTime) / (1000 * 60))
     );
     localStorage.setItem("seconds", (Date.now() - startTime) / 1000);
+    localStorage.setItem("incorrectcount", incorrectCount);
     navigate("/result");
   };
 
@@ -136,6 +161,7 @@ function Type() {
     if (started === false) {
       // started to type or not
       setStartTime(Date.now());
+
       console.log(startTime);
       setStarted(true); // started
     }
@@ -176,6 +202,7 @@ function Type() {
         setCorrectCount(correctCount + 1);
       } else {
         words[current].status = "incorrect";
+        setIncorrectCount(incorrectCount + 1);
       }
       setTypedWord("");
       setCurrent((current) => {
@@ -188,11 +215,40 @@ function Type() {
   return (
     <>
       <div className="container pt-4">
+        {chooseType === 1 && <h1>Timer : {counter}</h1>}
         <div className="row d-flex justify-content-center">
-          <div className="col-xl-1 col-lg-2 col-md-3 col-3 text-center"></div>
-          <div className="col-xl-1 col-lg-2 col-md-3 col-3 text-center"></div>
-          <div className="col-xl-1 col-lg-2 col-md-3 col-3 text-center"></div>
-          <div className="col-xl-1 col-lg-2 col-md-3 col-3 text-center"></div>
+          <div className="col-xl-1 col-lg-6 col-md-6 col-6 text-center">
+            <span>Choose By Time</span>
+            <select
+              onChange={(e) => {
+                console.log(e.target.value);
+                setchooseType(1);
+                setCounter(e.target.value);
+                console.log("this is counter" + counter);
+                loadWords();
+              }}
+              className="btn btn-secondary rounded-pill w-100"
+            >
+              <option value="30">30</option>
+              <option value="60">60</option>
+            </select>
+          </div>
+          <div className="col-xl-1 col-lg-6 col-md-6 col-6 text-center">
+            <span>Choose By word</span>
+            <select
+              onChange={(e) => {
+                console.log(e.target.value);
+                totalWords = e.target.value;
+                setchooseType(2);
+                loadWords();
+              }}
+              className="btn btn-secondary rounded-pill w-100"
+            >
+              <option value="12">12</option>
+              <option value="20">20</option>
+              <option value="40">40</option>
+            </select>
+          </div>
         </div>
         <div className="row" style={{ minHeight: "250px" }}>
           <div id="sentence" className="col py-3 text-center fs-3 sentence">
